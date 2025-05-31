@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Password Strength Checker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f7f7f7;
+      padding: 50px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+      width: 400px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    input[type="password"], input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background: #007bff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+    }
+    .strong {
+      color: green;
+    }
+    .moderate {
+      color: orange;
+    }
+    .weak {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Password Strength Checker</h2>
+    <input type="password" id="passwordInput" placeholder="Enter password" />
+    <button onclick="checkPassword()">Check Strength</button>
+    <button onclick="generatePassword()">Generate Strong Password</button>
+
+    <div class="result">
+      <p id="strengthResult"></p>
+      <p id="suggestions"></p>
+    </div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const password = document.getElementById('passwordInput').value;
+      const strengthElement = document.getElementById('strengthResult');
+      const suggestionsElement = document.getElementById('suggestions');
+
+      let strength = '';
+      let suggestions = [];
+
+      const lengthCriteria = password.length >= 12;
+      const uppercaseCriteria = /[A-Z]/.test(password);
+      const lowercaseCriteria = /[a-z]/.test(password);
+      const numberCriteria = /[0-9]/.test(password);
+      const specialCharCriteria = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+      const passedCriteria = [lengthCriteria, uppercaseCriteria, lowercaseCriteria, numberCriteria, specialCharCriteria].filter(Boolean).length;
+
+      if (passedCriteria === 5) {
+        strength = 'Strong';
+      } else if (passedCriteria >= 3) {
+        strength = 'Moderate';
+      } else {
+        strength = 'Weak';
+      }
+
+      if (!lengthCriteria) suggestions.push('Use at least 12 characters.');
+      if (!uppercaseCriteria) suggestions.push('Include uppercase letters.');
+      if (!lowercaseCriteria) suggestions.push('Include lowercase letters.');
+      if (!numberCriteria) suggestions.push('Include numbers.');
+      if (!specialCharCriteria) suggestions.push('Include special characters.');
+
+      strengthElement.textContent = `Strength: ${strength}`;
+      strengthElement.className = strength.toLowerCase();
+      suggestionsElement.textContent = suggestions.join(' ');
+    }
+
+    function generatePassword() {
+      const length = 16;
+      const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+      let password = "";
+      for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * charset.length);
+        password += charset[randomIndex];
+      }
+      const input = document.getElementById('passwordInput');
+      input.type = 'text'; // Reveal password
+      input.value = password;
+      checkPassword(); // Auto-check the generated password
+    }
+  </script>
+</body>
+</html>
